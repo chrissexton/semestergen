@@ -7,10 +7,19 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/gobuffalo/packr/v2"
+
 	"github.com/BurntSushi/toml"
 )
 
 const layout = "2006-01-02"
+
+var tplMap = map[string]string{
+	"assignments": "tpl/assignments.adoc.tpl",
+	"schedule":    "tpl/schedule.adoc.tpl",
+	"syllabus":    "tpl/syllabus.adoc.tpl",
+	"course":      "tpl/course.task.tpl",
+}
 
 type DayMap map[int]time.Time
 
@@ -98,8 +107,13 @@ func (c Config) GetDate(day int) string {
 	return c.Dates[day].Format("01-02")
 }
 
+var box *packr.Box
+
 func main() {
 	flag.Parse()
+
+	box = packr.New("templates", "./tpl")
+
 	for i := 0; i < flag.NArg(); i++ {
 		c := mkConfig(flag.Arg(i))
 		if err := writeSyllabus(c); err != nil {
@@ -127,8 +141,9 @@ func writeTaskPaper(c Config) error {
 		"getDate": c.GetDate,
 		"dueTime": func() string { return c.DueTime },
 	}
-	//tpl := template.Must(template.ParseFiles("assignments.adoc.tpl"))
-	tpl, err := template.New("course.task.tpl").Funcs(funcs).ParseFiles("course.task.tpl")
+	tplName := "course"
+	src, _ := box.FindString(tplName)
+	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
 	if err != nil {
 		return err
 	}
@@ -145,8 +160,9 @@ func writeAssignments(c Config) error {
 	funcs := template.FuncMap{
 		"getDate": c.GetDate,
 	}
-	//tpl := template.Must(template.ParseFiles("assignments.adoc.tpl"))
-	tpl, err := template.New("assignments.adoc.tpl").Funcs(funcs).ParseFiles("assignments.adoc.tpl")
+	tplName := "assignments"
+	src, _ := box.FindString(tplName)
+	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
 	if err != nil {
 		return err
 	}
@@ -160,7 +176,12 @@ func writeSchedule(c Config) error {
 	if err != nil {
 		return err
 	}
-	tpl := template.Must(template.ParseFiles("schedule.adoc.tpl"))
+	tplName := "schedule"
+	src, _ := box.FindString(tplName)
+	tpl, err := template.New(tplName).Parse(src)
+	if err != nil {
+		return err
+	}
 	err = tpl.Execute(f, c)
 	return err
 }
@@ -171,7 +192,12 @@ func writeSyllabus(c Config) error {
 	if err != nil {
 		return err
 	}
-	tpl := template.Must(template.ParseFiles("syllabus.adoc.tpl"))
+	tplName := "syllabus"
+	src, _ := box.FindString(tplName)
+	tpl, err := template.New(tplName).Parse(src)
+	if err != nil {
+		return err
+	}
 	err = tpl.Execute(f, c)
 	return err
 }
