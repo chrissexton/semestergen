@@ -2,11 +2,14 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"log"
 	"os"
 	"strings"
 	"text/template"
 	"time"
 
+	"github.com/gobuffalo/packd"
 	"github.com/gobuffalo/packr/v2"
 
 	"github.com/BurntSushi/toml"
@@ -15,10 +18,10 @@ import (
 const layout = "2006-01-02"
 
 var tplMap = map[string]string{
-	"assignments": "tpl/assignments.adoc.tpl",
-	"schedule":    "tpl/schedule.adoc.tpl",
-	"syllabus":    "tpl/syllabus.adoc.tpl",
-	"course":      "tpl/course.task.tpl",
+	"assignments": "assignments.adoc.tpl",
+	"schedule":    "schedule.adoc.tpl",
+	"syllabus":    "syllabus.adoc.tpl",
+	"course":      "course.task.tpl",
 }
 
 type DayMap map[int]time.Time
@@ -96,7 +99,7 @@ type Config struct {
 
 	Days        []Day
 	Assignments []Assignment
-	Resources   []Link
+	Resources   string
 	Evaluation  []Eval
 	EvalText    string
 
@@ -113,6 +116,13 @@ func main() {
 	flag.Parse()
 
 	box = packr.New("templates", "./tpl")
+
+	log.Println("semestergen 0.02")
+
+	box.Walk(func(s string, file packd.File) error {
+		log.Printf("box file: %s", s)
+		return nil
+	})
 
 	for i := 0; i < flag.NArg(); i++ {
 		c := mkConfig(flag.Arg(i))
@@ -141,7 +151,7 @@ func writeTaskPaper(c Config) error {
 		"getDate": c.GetDate,
 		"dueTime": func() string { return c.DueTime },
 	}
-	tplName := "course"
+	tplName := tplMap["course"]
 	src, _ := box.FindString(tplName)
 	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
 	if err != nil {
@@ -160,7 +170,7 @@ func writeAssignments(c Config) error {
 	funcs := template.FuncMap{
 		"getDate": c.GetDate,
 	}
-	tplName := "assignments"
+	tplName := tplMap["assignments"]
 	src, _ := box.FindString(tplName)
 	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
 	if err != nil {
@@ -176,10 +186,14 @@ func writeSchedule(c Config) error {
 	if err != nil {
 		return err
 	}
-	tplName := "schedule"
-	src, _ := box.FindString(tplName)
+	tplName := tplMap["schedule"]
+	src, err := box.FindString(tplName)
+	if err != nil {
+		return fmt.Errorf("error finding template: %w", err)
+	}
 	tpl, err := template.New(tplName).Parse(src)
 	if err != nil {
+		return fmt.Errorf("error parsing template: %w", err)
 		return err
 	}
 	err = tpl.Execute(f, c)
@@ -192,7 +206,7 @@ func writeSyllabus(c Config) error {
 	if err != nil {
 		return err
 	}
-	tplName := "syllabus"
+	tplName := tplMap["syllabus"]
 	src, _ := box.FindString(tplName)
 	tpl, err := template.New(tplName).Parse(src)
 	if err != nil {

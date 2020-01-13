@@ -45,13 +45,7 @@ This schedule is tentative.
 
 == Some F# resources
 
-{{range .Resources -}}
-{{- if .URL}}
-{{.Stars}} {{.URL}}[{{.Title}}]
-{{- else}}
-{{.Stars}} {{.Title}}
-{{- end}}
-{{- end}}
+{{.Resources}}
 
 == Grading Scale
 
