@@ -24,6 +24,8 @@ var tplMap = map[string]string{
 	"course":      "course.task.tpl",
 }
 
+var linkChecker = mkLinkChecker()
+
 type DayMap map[int]time.Time
 
 type Eval struct {
@@ -32,6 +34,8 @@ type Eval struct {
 }
 
 type Link struct {
+	ID string
+
 	// Text of Link
 	Title string
 
@@ -50,7 +54,7 @@ func (l Link) Stars() string {
 }
 
 func (l Link) Slug() string {
-	out := strings.ReplaceAll(l.Title, " ", "-")
+	out := strings.ReplaceAll(l.ID, " ", "-")
 	out = strings.ReplaceAll(out, "#", "")
 	out = strings.ReplaceAll(out, "&", "")
 	return out
@@ -217,6 +221,30 @@ func writeSyllabus(c Config) error {
 	return err
 }
 
+func mkLinkChecker() func(Link) Link {
+	ids := map[string]bool{}
+	return func(l Link) Link {
+		if !ids[l.Title] {
+			ids[l.Title] = true
+			l.ID = l.Title
+			return l
+		}
+
+		ext := 1
+		potential := fmt.Sprintf("%s-%d", l.Title, ext)
+
+		for ids[potential] {
+			ext += 1
+			potential = fmt.Sprintf("%s-%d", l.Title, ext)
+		}
+
+		l.ID = potential
+		ids[potential] = true
+
+		return l
+	}
+}
+
 func mkConfig(path string) Config {
 	var c Config
 	if _, err := toml.DecodeFile(path, &c); err != nil {
@@ -226,6 +254,16 @@ func mkConfig(path string) Config {
 		c.Days[i].Num = i + 1
 	}
 	c.Dates = mkDates(c.Start, c.End, c.DaysOff)
+	for i, assn := range c.Assignments {
+		for j, l := range assn.Links {
+			c.Assignments[i].Links[j] = linkChecker(l)
+		}
+	}
+	for i, day := range c.Days {
+		for j, l := range day.Links {
+			c.Days[i].Links[j] = linkChecker(l)
+		}
+	}
 	return c
 }
 
