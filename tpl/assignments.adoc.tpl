@@ -12,4 +12,3 @@
 {{end}}
 |===
 
-These events are in a public calendar you may add to your own calendar software: https://p69-caldav.icloud.com/published/2/AAAAAAAAAAAAAAAAAAAAANFRXqg59DGi6z91QTJ-xG1Ope_sr0CiqvA6uMlifzjd3vdL7pulndzvh4lIbs7jcjVkXXeLS7hOJi_yt4J96Y8[Published iCal Link]
