@@ -90,6 +90,7 @@ type Config struct {
 	Text        string
 	Description string
 	Legal       string
+	ICalLink    string
 
 	Start   time.Time
 	End     time.Time

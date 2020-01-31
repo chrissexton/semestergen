@@ -12,3 +12,6 @@
 {{end}}
 |===
 
+{{if .ICalLink }}
+These events are in a public calendar you may add to your own calendar software: {{.ICalLink}}[Published iCal Link]
+{{end}}
