@@ -43,7 +43,7 @@ include::assignments.adoc[]
 
 This schedule is tentative.
 
-== Some F# resources
+== Resources
 
 {{.Resources}}
 
