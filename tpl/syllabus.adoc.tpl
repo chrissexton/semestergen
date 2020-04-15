@@ -25,12 +25,7 @@ ifdef::backend-pdf[= {{.Title}}]
 
 *Text*: {{.Text}}
 
-== Status
-
-[.text-center]
-++++
-<a class="twitter-timeline" data-lang="en" data-dnt="true" href="https://twitter.com/ProfessorSexton?ref_src=twsrc%5Etfw">Tweets by ProfessorSexton</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
-++++
+include::status.adoc[opts=optional]
 
 == Course
 
