@@ -24,8 +24,6 @@ var tplMap = map[string]string{
 	"course":      "course.task.tpl",
 }
 
-var linkChecker = mkLinkChecker()
-
 type DayMap map[int]time.Time
 
 type Eval struct {
@@ -221,7 +219,7 @@ func writeSyllabus(c Config) error {
 	return err
 }
 
-func mkLinkChecker() func(Link) Link {
+var linkChecker = func() func(Link) Link {
 	ids := map[string]bool{}
 	return func(l Link) Link {
 		if !ids[l.Title] {
@@ -243,7 +241,7 @@ func mkLinkChecker() func(Link) Link {
 
 		return l
 	}
-}
+}()
 
 func mkConfig(path string) Config {
 	var c Config
