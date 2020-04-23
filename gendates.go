@@ -69,13 +69,13 @@ type Assignment struct {
 	Due int
 
 	// DueDate date in YYYY-MM-DD HH:mm format
-	DueDate string
+	DueDate *time.Time
 
 	// Day of the semester assignment is assigned (must be a class day)
 	Assigned int
 
 	// AssignedDate date in YYYY-MM-DD format
-	AssignedDate string
+	AssignedDate *time.Time
 }
 
 type Day struct {
@@ -115,21 +115,21 @@ type Config struct {
 	Dates DayMap
 }
 
-func (c Config) GetDate(day int, override string) string {
+func (c Config) GetDate(day int, override *time.Time) string {
 	d := c.Dates[day].Format("01-02")
-	if override != "" {
-		if t, err := time.Parse("2006-01-02", override); err == nil {
-			d = t.Format("01-02")
-		}
+	if override !=  nil {
+		d = override.Format("01-02")
 	}
 	return d
 }
 
 func (c Config) GetDateNum(day int) string {
-	return c.GetDate(day, "")
+	return c.GetDate(day, nil)
 }
 
 var box *packr.Box
+
+var syllabusFile = flag.String("syllabus", "readme.adoc", "name of the syllabus file")
 
 func main() {
 	flag.Parse()
@@ -222,7 +222,7 @@ func writeSchedule(c Config) error {
 }
 
 func writeSyllabus(c Config) error {
-	f, err := os.Create("syllabus.adoc")
+	f, err := os.Create(*syllabusFile)
 	defer f.Close()
 	if err != nil {
 		return err
