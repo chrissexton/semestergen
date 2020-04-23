@@ -1,5 +1,10 @@
+build: gendates.go
+	packr2 build
+
 run: build *.adoc.tpl c311.toml
 	./semestergen c311.toml
 
-build: gendates.go
-	go build
+clean:
+	@rm -rf packrd main-packr.go semestergen
+
+.PHONY: clean
