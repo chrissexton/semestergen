@@ -1,4 +1,5 @@
 = {{.Title}}
+:nofooter:
 :toc: left
 ifdef::backend-html5[]
 endif::[]

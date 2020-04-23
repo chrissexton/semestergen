@@ -1,3 +1,4 @@
+:nofooter:
 {{- range $key, $value := .Assignments}}
 {{- range $value.Links}}
 :{{.Slug}}: link:{{.URL}}

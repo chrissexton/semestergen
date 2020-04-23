@@ -1,3 +1,4 @@
+:nofooter:
 {{- range $key, $value := .Days}}
 {{- range $value.Links}}
 :{{.Slug}}: link:{{.URL}}
