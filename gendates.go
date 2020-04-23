@@ -68,8 +68,14 @@ type Assignment struct {
 	// Day of the semester assignment is due (must be a class day)
 	Due int
 
+	// DueDate date in YYYY-MM-DD HH:mm format
+	DueDate string
+
 	// Day of the semester assignment is assigned (must be a class day)
 	Assigned int
+
+	// AssignedDate date in YYYY-MM-DD format
+	AssignedDate string
 }
 
 type Day struct {
@@ -109,8 +115,18 @@ type Config struct {
 	Dates DayMap
 }
 
-func (c Config) GetDate(day int) string {
-	return c.Dates[day].Format("01-02")
+func (c Config) GetDate(day int, override string) string {
+	d := c.Dates[day].Format("01-02")
+	if override != "" {
+		if t, err := time.Parse("2006-01-02", override); err == nil {
+			d = t.Format("01-02")
+		}
+	}
+	return d
+}
+
+func (c Config) GetDateNum(day int) string {
+	return c.GetDate(day, "")
 }
 
 var box *packr.Box
@@ -152,6 +168,7 @@ func writeTaskPaper(c Config) error {
 	}
 	funcs := template.FuncMap{
 		"getDate": c.GetDate,
+		"getDateNum": c.GetDateNum,
 		"dueTime": func() string { return c.DueTime },
 	}
 	tplName := tplMap["course"]
@@ -172,6 +189,7 @@ func writeAssignments(c Config) error {
 	}
 	funcs := template.FuncMap{
 		"getDate": c.GetDate,
+		"getDateNum": c.GetDateNum,
 	}
 	tplName := tplMap["assignments"]
 	src, _ := box.FindString(tplName)

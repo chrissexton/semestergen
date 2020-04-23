@@ -8,7 +8,7 @@
 |===
 | Given  | Due Date    | Assignment
 {{range $key, $value := .Assignments}}
-|  {{getDate $value.Assigned}}   | {{getDate $value.Due}}   | {{$value.Title}}: {{range $idx, $el := $value.Links}}{{if $idx}}; {{end}}{{$el.Slug | printf "{%s}"}}[{{$el.Title}}]{{end}}
+|  {{getDate $value.Assigned $value.AssignedDate}}   | {{getDate $value.Due $value.DueDate}}   | {{$value.Title}}: {{range $idx, $el := $value.Links}}{{if $idx}}; {{end}}{{$el.Slug | printf "{%s}"}}[{{$el.Title}}]{{end}}
 {{end}}
 |===
 
