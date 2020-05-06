@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/gobuffalo/packd"
 	"github.com/gobuffalo/packr/v2"
@@ -55,6 +56,13 @@ func (l Link) Slug() string {
 	out := strings.ReplaceAll(l.ID, " ", "-")
 	out = strings.ReplaceAll(out, "#", "")
 	out = strings.ReplaceAll(out, "&", "")
+	out = strings.ReplaceAll(out, ":", "")
+	out = strings.ReplaceAll(out, "'", "")
+	out = strings.ReplaceAll(out, `""`, "")
+	out = strings.ReplaceAll(out, "$", "")
+	out = strings.ReplaceAll(out, "%", "")
+	out = strings.ReplaceAll(out, "^", "")
+	log.Debug().Str("l.ID", l.ID).Str("out", out).Msgf("slug")
 	return out
 }
 
@@ -117,7 +125,7 @@ type Config struct {
 
 func (c Config) GetDate(day int, override *time.Time) string {
 	d := c.Dates[day].Format("01-02")
-	if override !=  nil {
+	if override != nil {
 		d = override.Format("01-02")
 	}
 	return d
@@ -136,10 +144,10 @@ func main() {
 
 	box = packr.New("templates", "./tpl")
 
-	log.Println("semestergen 0.02")
+	log.Debug().Msgf("semestergen 0.03")
 
 	box.Walk(func(s string, file packd.File) error {
-		log.Printf("box file: %s", s)
+		log.Debug().Msgf("box file: %s", s)
 		return nil
 	})
 
@@ -167,9 +175,9 @@ func writeTaskPaper(c Config) error {
 		return err
 	}
 	funcs := template.FuncMap{
-		"getDate": c.GetDate,
+		"getDate":    c.GetDate,
 		"getDateNum": c.GetDateNum,
-		"dueTime": func() string { return c.DueTime },
+		"dueTime":    func() string { return c.DueTime },
 	}
 	tplName := tplMap["course"]
 	src, _ := box.FindString(tplName)
@@ -188,7 +196,7 @@ func writeAssignments(c Config) error {
 		return err
 	}
 	funcs := template.FuncMap{
-		"getDate": c.GetDate,
+		"getDate":    c.GetDate,
 		"getDateNum": c.GetDateNum,
 	}
 	tplName := tplMap["assignments"]

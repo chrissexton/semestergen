@@ -7,4 +7,7 @@ run: build *.adoc.tpl c311.toml
 clean:
 	@rm -rf packrd main-packr.go semestergen
 
+install: build
+	go install
+
 .PHONY: clean

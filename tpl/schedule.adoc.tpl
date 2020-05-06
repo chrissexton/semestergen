@@ -9,6 +9,7 @@
 |===
 | Day | Topics                                                          | Notes
 {{range $key, $value := .Days}}
-|  {{$value.Num}}   | {{$value.Title}}   | {{range $idx, $l := $value.Links}}{{if $idx}}; {{end}}{{$l.Slug | printf "{%s}"}}[{{$l.Title}}]{{end}}
+|  {{$value.Num}}   a| {{$value.Title}}   a| {{range $idx, $l := $value.Links}}* {{$l.Slug | printf "{%s}"}}[{{$l.Title}}]
+{{end}}
 {{end}}
 |===
