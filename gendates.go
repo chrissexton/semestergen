@@ -79,6 +79,8 @@ func (l Link) Slug() string {
 		`]`,
 		`{`,
 		`}`,
+		`,`,
+		`.`,
 	}
 	for _, s := range forbidden {
 		out = strings.ReplaceAll(out, s, "")
