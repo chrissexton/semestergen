@@ -59,6 +59,7 @@ func (l Link) Slug() string {
 	out = strings.ReplaceAll(out, ":", "")
 	out = strings.ReplaceAll(out, "'", "")
 	out = strings.ReplaceAll(out, `""`, "")
+	out = strings.ReplaceAll(out, `/`, "")
 	out = strings.ReplaceAll(out, "$", "")
 	out = strings.ReplaceAll(out, "%", "")
 	out = strings.ReplaceAll(out, "^", "")
