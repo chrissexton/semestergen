@@ -54,15 +54,35 @@ func (l Link) Stars() string {
 
 func (l Link) Slug() string {
 	out := strings.ReplaceAll(l.ID, " ", "-")
-	out = strings.ReplaceAll(out, "#", "")
-	out = strings.ReplaceAll(out, "&", "")
-	out = strings.ReplaceAll(out, ":", "")
-	out = strings.ReplaceAll(out, "'", "")
-	out = strings.ReplaceAll(out, `""`, "")
-	out = strings.ReplaceAll(out, `/`, "")
-	out = strings.ReplaceAll(out, "$", "")
-	out = strings.ReplaceAll(out, "%", "")
-	out = strings.ReplaceAll(out, "^", "")
+	forbidden := []string{
+		"#",
+		"&",
+		":",
+		"'",
+		`"`,
+		`/`,
+		"$",
+		"%",
+		"^",
+		"(",
+		")",
+		`’`,
+		`|`,
+		`@`,
+		`+`,
+		`\`,
+		`<`,
+		`>`,
+		`?`,
+		`|`,
+		`[`,
+		`]`,
+		`{`,
+		`}`,
+	}
+	for _, s := range forbidden {
+		out = strings.ReplaceAll(out, s, "")
+	}
 	log.Debug().Str("l.ID", l.ID).Str("out", out).Msgf("slug")
 	return out
 }
