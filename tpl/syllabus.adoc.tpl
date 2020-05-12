@@ -34,7 +34,7 @@ include::status.adoc[opts=optional]
 
 == Schedule
 
-Note: *Many of these links may be dead.* They will be live when we reach the
+Note: *Many of these links may be dead or locked.* They will be live when we reach the
 content represented. Please ask via email if there is a
 particular file missing from the course that should be live.
  
