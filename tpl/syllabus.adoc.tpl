@@ -7,6 +7,7 @@ ifdef::backend-pdf[]
 :notitle:
 :pdf-style: theme.yml
 endif::[]
+:icons: font
 :book: link:https://www.amazon.com/dp/013394302X/
 :0001: link:https://falconair.github.io/2015/01/30/composingcontracts.html
 
