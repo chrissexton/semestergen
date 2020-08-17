@@ -138,4 +138,4 @@ Documented illness is the only acceptable excuse for not completing an assignmen
 
 == Disclaimer
 
-Although every effort has been made to make the above listing complete and accurate, minor adjustments to the schedule are sometimes necessary due to weather, or other problems that crop up. The quantity of assignments and tests will not increase. In-Class work may change. The grading scale and late policy will remain constant.
+Although every effort has been made to make the above listing complete and accurate, minor adjustments to the schedule are sometimes necessary due to weather, or other problems that crop up. The grading scale and late policy will remain constant.
