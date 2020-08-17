@@ -9,6 +9,7 @@
 |===
 | Day | Topics                                                          | Notes
 {{range $key, $value := .Days}}
+// {{$value.Date}}
 |  {{$value.Num}}   a| {{$value.Title}}   a| {{range $idx, $l := $value.Links}}* {{$l.Slug | printf "{%s}"}}[{{$l.Title}}]
 {{end}}
 {{end}}

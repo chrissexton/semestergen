@@ -8,18 +8,17 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/rs/zerolog/log"
-
+	"github.com/BurntSushi/toml"
 	"github.com/gobuffalo/packd"
 	"github.com/gobuffalo/packr/v2"
-
-	"github.com/BurntSushi/toml"
+	"github.com/rs/zerolog/log"
 )
 
 const layout = "2006-01-02"
 
 var tplMap = map[string]string{
 	"assignments": "assignments.adoc.tpl",
+	"ics":         "assignments.ics.tpl",
 	"schedule":    "schedule.adoc.tpl",
 	"syllabus":    "syllabus.adoc.tpl",
 	"course":      "course.task.tpl",
@@ -116,7 +115,8 @@ type Day struct {
 	// Assignment Link plus supplemental material
 	Links []Link
 
-	Num int
+	Num  int
+	Date time.Time
 }
 
 type Config struct {
@@ -144,6 +144,21 @@ type Config struct {
 	EvalText    string
 
 	Dates DayMap
+}
+
+// Mon Jan 2 15:04:05 MST 2006
+// 19971210T080000Z
+
+func GetDTStamp() string {
+	return time.Now().Format("20060102T150405Z")
+}
+
+func (c Config) GetDTStart(day int, override *time.Time) string {
+	d := c.Dates[day].Format("20060102")
+	if override != nil {
+		d = override.Format("20060102")
+	}
+	return d
 }
 
 func (c Config) GetDate(day int, override *time.Time) string {
@@ -185,6 +200,9 @@ func main() {
 		if err := writeAssignments(c); err != nil {
 			panic(err)
 		}
+		if err := writeICS(c); err != nil {
+			panic(err)
+		}
 		if err := writeTaskPaper(c); err != nil {
 			panic(err)
 		}
@@ -223,6 +241,28 @@ func writeAssignments(c Config) error {
 		"getDateNum": c.GetDateNum,
 	}
 	tplName := tplMap["assignments"]
+	src, _ := box.FindString(tplName)
+	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
+	if err != nil {
+		return err
+	}
+	err = tpl.Funcs(funcs).Execute(f, c)
+	return err
+}
+
+func writeICS(c Config) error {
+	f, err := os.Create(strings.ReplaceAll(c.Project, " ", "-")+".ics")
+	defer f.Close()
+	if err != nil {
+		return err
+	}
+	funcs := template.FuncMap{
+		"getDate":    c.GetDate,
+		"getDateNum": c.GetDateNum,
+		"getDTStamp": GetDTStamp,
+		"getDTStart": c.GetDTStart,
+	}
+	tplName := tplMap["ics"]
 	src, _ := box.FindString(tplName)
 	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
 	if err != nil {
@@ -297,10 +337,11 @@ func mkConfig(path string) Config {
 	if _, err := toml.DecodeFile(path, &c); err != nil {
 		panic(err)
 	}
+	c.Dates = mkDates(c.Start, c.End, c.DaysOff)
 	for i := range c.Days {
 		c.Days[i].Num = i + 1
+		c.Days[i].Date = c.Dates[i]
 	}
-	c.Dates = mkDates(c.Start, c.End, c.DaysOff)
 	for i, assn := range c.Assignments {
 		for j, l := range assn.Links {
 			c.Assignments[i].Links[j] = linkChecker(l)
