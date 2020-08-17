@@ -153,6 +153,10 @@ func GetDTStamp() string {
 	return time.Now().Format("20060102T150405Z")
 }
 
+func (c Config) ProjectSlug() string {
+	return strings.ReplaceAll(c.Project, " ", "-")
+}
+
 func (c Config) GetDTStart(day int, override *time.Time) string {
 	d := c.Dates[day].Format("20060102")
 	if override != nil {
@@ -251,7 +255,7 @@ func writeAssignments(c Config) error {
 }
 
 func writeICS(c Config) error {
-	f, err := os.Create(strings.ReplaceAll(c.Project, " ", "-")+".ics")
+	f, err := os.Create(c.ProjectSlug()+".ics")
 	defer f.Close()
 	if err != nil {
 		return err
@@ -261,6 +265,7 @@ func writeICS(c Config) error {
 		"getDateNum": c.GetDateNum,
 		"getDTStamp": GetDTStamp,
 		"getDTStart": c.GetDTStart,
+		"projectSlug":  c.ProjectSlug,
 	}
 	tplName := tplMap["ics"]
 	src, _ := box.FindString(tplName)
