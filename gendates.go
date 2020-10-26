@@ -21,7 +21,7 @@ var tplMap = map[string]string{
 	"ics":         "assignments.ics.tpl",
 	"schedule":    "schedule.adoc.tpl",
 	"syllabus":    "syllabus.adoc.tpl",
-	"course":      "course.task.tpl",
+	"course":      "course.taskpaper.tpl",
 }
 
 type DayMap map[int]time.Time
@@ -214,7 +214,7 @@ func main() {
 }
 
 func writeTaskPaper(c Config) error {
-	f, err := os.Create("course.task")
+	f, err := os.Create("course.taskpaper")
 	defer f.Close()
 	if err != nil {
 		return err
@@ -255,17 +255,17 @@ func writeAssignments(c Config) error {
 }
 
 func writeICS(c Config) error {
-	f, err := os.Create(c.ProjectSlug()+".ics")
+	f, err := os.Create(c.ProjectSlug() + ".ics")
 	defer f.Close()
 	if err != nil {
 		return err
 	}
 	funcs := template.FuncMap{
-		"getDate":    c.GetDate,
-		"getDateNum": c.GetDateNum,
-		"getDTStamp": GetDTStamp,
-		"getDTStart": c.GetDTStart,
-		"projectSlug":  c.ProjectSlug,
+		"getDate":     c.GetDate,
+		"getDateNum":  c.GetDateNum,
+		"getDTStamp":  GetDTStamp,
+		"getDTStart":  c.GetDTStart,
+		"projectSlug": c.ProjectSlug,
 	}
 	tplName := tplMap["ics"]
 	src, _ := box.FindString(tplName)
