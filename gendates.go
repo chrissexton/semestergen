@@ -166,6 +166,9 @@ func (c Config) GetDTStart(day int, override *time.Time) string {
 }
 
 func (c Config) GetDate(day int, override *time.Time) string {
+	if day == -1 {
+		return "TBD"
+	}
 	d := c.Dates[day].Format("01-02")
 	if override != nil {
 		d = override.Format("01-02")
@@ -174,6 +177,9 @@ func (c Config) GetDate(day int, override *time.Time) string {
 }
 
 func (c Config) GetDateNum(day int) string {
+	if day == -1 {
+		return "TBD"
+	}
 	return c.GetDate(day, nil)
 }
 
@@ -220,8 +226,7 @@ func writeTaskPaper(c Config) error {
 		return err
 	}
 	funcs := template.FuncMap{
-		"getDate":    c.GetDate,
-		"getDateNum": c.GetDateNum,
+		"getDate":    c.GetDateNum,
 		"dueTime":    func() string { return c.DueTime },
 	}
 	tplName := tplMap["course"]
