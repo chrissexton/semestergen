@@ -1,4 +1,5 @@
 = {{.Title}}
+:favicon: ./resources/favicon.jpg
 :nofooter:
 :toc: left
 ifdef::backend-html5[]
