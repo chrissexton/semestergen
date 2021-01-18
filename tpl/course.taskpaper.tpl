@@ -5,7 +5,7 @@
 {{- end}}
 	Grading: @parallel(false) @autodone(false) @context(Place : IUS) @tags(Place : IUS)
 {{- range $key, $value := .Assignments}}
-		- {{$value.Title}} @context(Place : IUS) @tags(Place : IUS) @defer({{getDate $value.Due}} {{dueTime}})
+		- {{$value.Title}} @context(Place : IUS) @tags(Place : IUS) @defer({{getDate $value.Due $value.DueDate}} {{dueTime}})
 {{- end}}
 	Lectures: @parallel(false) @autodone(false) @context(Place : IUS) @tags(Place : IUS)
 {{- range $key, $value := .Days}}
