@@ -226,7 +226,8 @@ func writeTaskPaper(c Config) error {
 		return err
 	}
 	funcs := template.FuncMap{
-		"getDate":    c.GetDateNum,
+		"getDate":    c.GetDate,
+		"getDateNum": c.GetDateNum,
 		"dueTime":    func() string { return c.DueTime },
 	}
 	tplName := tplMap["course"]
