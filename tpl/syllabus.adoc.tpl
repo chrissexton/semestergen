@@ -54,6 +54,7 @@ This schedule is tentative.
 
 == Grading Scale
 
+[%header,format=psv]
 |===
 | Grade Percentage | Letter Grade 
 | 90-100           | A            
