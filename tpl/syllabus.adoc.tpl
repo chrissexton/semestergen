@@ -69,7 +69,9 @@ Note that a C is the minimum grade accepted for Natural Science Degrees.
 
 == Course Evaluation
 
+[%header,format=psv]
 |===
+| Category | Percentage
 {{- range .Evaluation}}
 | **{{.Title}}**   | {{.Value}}
 {{- end}}
