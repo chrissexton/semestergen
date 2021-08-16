@@ -169,7 +169,7 @@ func (c Config) GetDate(day int, override *time.Time) string {
 	if day == -1 {
 		return "TBD"
 	}
-	d := c.Dates[day].Format("01-02")
+	d := c.Dates[day-1].Format("01-02")
 	if override != nil {
 		d = override.Format("01-02")
 	}
@@ -297,7 +297,6 @@ func writeSchedule(c Config) error {
 	tpl, err := template.New(tplName).Parse(src)
 	if err != nil {
 		return fmt.Errorf("error parsing template: %w", err)
-		return err
 	}
 	err = tpl.Execute(f, c)
 	return err
@@ -371,10 +370,13 @@ func mkDates(begin, end time.Time, daysOff []time.Time) DayMap {
 		return DayMap{}
 	}
 	out := make(DayMap)
-	for i, d := 1, begin; d.Before(end.AddDate(0, 0, 1)); d = nextD(d) {
+	for i, d := 0, begin; d.Before(end.AddDate(0, 0, 1)); d = nextD(d) {
 		if !in(daysOff, d) {
 			out[i] = d
 			i++
+			log.Printf("Day %d: %s", i, d)
+		} else {
+			log.Printf("%s is a day off", d)
 		}
 	}
 	return out
