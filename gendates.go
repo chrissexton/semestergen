@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"os"
@@ -9,19 +10,20 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
-	"github.com/gobuffalo/packd"
-	"github.com/gobuffalo/packr/v2"
 	"github.com/rs/zerolog/log"
 )
+
+//go:embed tpl/*
+var embeddedFS embed.FS
 
 const layout = "2006-01-02"
 
 var tplMap = map[string]string{
-	"assignments": "assignments.adoc.tpl",
-	"ics":         "assignments.ics.tpl",
-	"schedule":    "schedule.adoc.tpl",
-	"syllabus":    "syllabus.adoc.tpl",
-	"course":      "course.taskpaper.tpl",
+	"assignments": "tpl/assignments.adoc.tpl",
+	"ics":         "tpl/assignments.ics.tpl",
+	"schedule":    "tpl/schedule.adoc.tpl",
+	"syllabus":    "tpl/syllabus.adoc.tpl",
+	"course":      "tpl/course.taskpaper.tpl",
 }
 
 type DayMap map[int]time.Time
@@ -183,21 +185,12 @@ func (c Config) GetDateNum(day int) string {
 	return c.GetDate(day, nil)
 }
 
-var box *packr.Box
-
 var syllabusFile = flag.String("syllabus", "readme.adoc", "name of the syllabus file")
 
 func main() {
 	flag.Parse()
 
-	box = packr.New("templates", "./tpl")
-
 	log.Debug().Msgf("semestergen 0.03")
-
-	box.Walk(func(s string, file packd.File) error {
-		log.Debug().Msgf("box file: %s", s)
-		return nil
-	})
 
 	for i := 0; i < flag.NArg(); i++ {
 		c := mkConfig(flag.Arg(i))
@@ -231,8 +224,8 @@ func writeTaskPaper(c Config) error {
 		"dueTime":    func() string { return c.DueTime },
 	}
 	tplName := tplMap["course"]
-	src, _ := box.FindString(tplName)
-	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
+	src, _ := embeddedFS.ReadFile(tplName)
+	tpl, err := template.New(tplName).Funcs(funcs).Parse(string(src))
 	if err != nil {
 		return err
 	}
@@ -251,8 +244,8 @@ func writeAssignments(c Config) error {
 		"getDateNum": c.GetDateNum,
 	}
 	tplName := tplMap["assignments"]
-	src, _ := box.FindString(tplName)
-	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
+	src, _ := embeddedFS.ReadFile(tplName)
+	tpl, err := template.New(tplName).Funcs(funcs).Parse(string(src))
 	if err != nil {
 		return err
 	}
@@ -274,8 +267,8 @@ func writeICS(c Config) error {
 		"projectSlug": c.ProjectSlug,
 	}
 	tplName := tplMap["ics"]
-	src, _ := box.FindString(tplName)
-	tpl, err := template.New(tplName).Funcs(funcs).Parse(src)
+	src, _ := embeddedFS.ReadFile(tplName)
+	tpl, err := template.New(tplName).Funcs(funcs).Parse(string(src))
 	if err != nil {
 		return err
 	}
@@ -290,11 +283,8 @@ func writeSchedule(c Config) error {
 		return err
 	}
 	tplName := tplMap["schedule"]
-	src, err := box.FindString(tplName)
-	if err != nil {
-		return fmt.Errorf("error finding template: %w", err)
-	}
-	tpl, err := template.New(tplName).Parse(src)
+	src, _ := embeddedFS.ReadFile(tplName)
+	tpl, err := template.New(tplName).Parse(string(src))
 	if err != nil {
 		return fmt.Errorf("error parsing template: %w", err)
 	}
@@ -309,8 +299,8 @@ func writeSyllabus(c Config) error {
 		return err
 	}
 	tplName := tplMap["syllabus"]
-	src, _ := box.FindString(tplName)
-	tpl, err := template.New(tplName).Parse(src)
+	src, _ := embeddedFS.ReadFile(tplName)
+	tpl, err := template.New(tplName).Parse(string(src))
 	if err != nil {
 		return err
 	}
