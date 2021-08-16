@@ -48,9 +48,11 @@ include::assignments.adoc[]
 
 This schedule is tentative.
 
+{{if .Resources}}
 == Resources
 
 {{.Resources}}
+{{end}}
 
 == Grading Scale
 
@@ -78,8 +80,9 @@ Note that a C is the minimum grade accepted for Natural Science Degrees.
 {{- end}}
 |===
 
-{{.Legal}}
-
+{{if .EvalText}}
+{{.EvalText}}
+{{else}}
 == Homework
 
 . Homework assignments cover areas you need to know and practice.
@@ -91,6 +94,10 @@ Note that a C is the minimum grade accepted for Natural Science Degrees.
 . Each class may have an in-class element that counts towards the in-class evaluation.
 . These assignments will not be graded, but participation points will be awarded.
 . Class participation will also be assigned in this category.
+
+{{end}}
+
+{{.Legal}}
 
 == Code of Student Rights, Responsibilities and Conduct
 
